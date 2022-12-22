@@ -1,0 +1,6 @@
+__pycache__/
+/data/raw_data/
+/imgs/
+/data/proced_data/Beijing_PM252.csv
+/data/proced_data/ChennailHousing2.csv
+/data/proced_data/USAHousing2.csv
