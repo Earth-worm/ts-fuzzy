@@ -2,7 +2,7 @@ import numpy as np
 import skfuzzy.cluster as fuzz_cmeans #c-平均法
 from sklearn import metrics
 
-class tsfuzzy():
+class TSFuzzy():
     ActFunc = None
     M = None
     C = None
@@ -14,7 +14,6 @@ class tsfuzzy():
     exVarNum = None
     tgt_size = None
     ParMax = None
-
 
     def __init__(self,X_src,y_src,X_tgt,y_tgt,M,C,Node,ParMax,ActFunc):
       self.M = M
@@ -29,7 +28,6 @@ class tsfuzzy():
       self.cntr,u = self._cmeans(X_src)
       self.linear_coef = self._init_linear_coef(X_src,y_src,u)
 
-
     def init_par(self,zero = False):
       if(zero):
         alpha = np.zeros((self.exVarNum,self.Node))
@@ -41,7 +39,7 @@ class tsfuzzy():
       weight = np.random.uniform(-self.ParMax,self.ParMax,(self.exVarNum,self.Node))
       return {"alpha":alpha,"beta":beta,"weight":weight}
 
-    def phi(self,par,x): #マッピング関数
+    def phi(self,x,par): #マッピング関数
       fixed_x = np.zeros_like(x)
       fixed_cntr = np.zeros_like(self.cntr)
       x_num = x.shape[0]
@@ -62,8 +60,12 @@ class tsfuzzy():
           fixed_cntr[c][m] = sum2
       return fixed_x,fixed_cntr
 
-    def predict(self,par,x):#t-s fuzzyモデルによる予測
-      fixed_X_tgt,fixed_cntr = self.phi(par,x)
+    def predict(self,x,par=None):#t-s fuzzyモデルによる予測
+      if par is None:
+        fixed_X_tgt = x
+        fixed_cntr = self.cntr
+      else:
+        fixed_X_tgt,fixed_cntr = self.phi(x,par)
       x_num = x.shape[0]
       y = np.zeros(x.shape[0])
       A = self._cmeans_predict(fixed_X_tgt,fixed_cntr)
@@ -75,7 +77,8 @@ class tsfuzzy():
       return y
 
     def Q(self,par,y,x):
-      return metrics.mean_squared_error(y,self.predict(par,x))
+      return metrics.mean_absolute_error(y,self.predict(x,par))
+      #return metrics.mean_squared_error(y,self.predict(par,x))
 
     def _init_linear_coef(self,x,y,u): #線形関数の計算
       src_size = len(y)

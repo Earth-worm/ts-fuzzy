@@ -1,7 +1,7 @@
 import math
 import numpy as np
 import time
-from utils.ts_fuzzy.ts_fuzzy import tsfuzzy
+from utils.ts_fuzzy.ts_fuzzy import TSFuzzy
 from utils.ts_fuzzy.actfunc import ActiveFunc
 import copy
 
@@ -39,7 +39,7 @@ class Nest:
       self.eggs = newEggs
       self.value = newValue
 
-  
+
   def abandon(self):
     self.eggs = self.ns.ts.init_par()
     self.value = self.evaluate(self.eggs,self.ns.y_train,self.ns.X_train)
@@ -73,7 +73,7 @@ class CS:
     self.y_test = y_test
     self.X_train = X_train
     self.y_train = y_train
-    self.ts = tsfuzzy(X_src,y_src,M,C,Node,ParMax,ActFunc)
+    self.ts = TSFuzzy(X_src,y_src,M,C,Node,ParMax,ActFunc)
     self.nests = []
 
     for i in range(self.SetSize):
@@ -81,7 +81,7 @@ class CS:
 
   def __del__(self):
     del self.nests
-  
+
   def alternate(self):
     r1 = np.random.randint(0,self.SetSize-1)
     r2 = (r1 + np.random.randint(0,self.SetSize - 2) + 1)%self.SetSize
@@ -89,9 +89,9 @@ class CS:
 
     for i in range(self.SetSize - int(self.AbaRate * self.SetSize),self.SetSize):
       self.nests[i].abandon()
-    
+
     self.sort(0,self.SetSize-1)
-  
+
   def sort(self,lb,ub):
     if(lb<ub):
       k=int((lb+ub)/2)
@@ -111,7 +111,7 @@ class CS:
           break
       self.sort(lb,j)
       self.sort(i,ub)
-  
+
   def learn(self):
     score_best = []
     for i in range(self.Gen):

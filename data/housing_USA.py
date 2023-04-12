@@ -83,13 +83,17 @@ class split_dataset():
             self.output_str = "price"
 
         def __str__(self):
-            return "test!"
+            self.analyze()
+            rtn = self.output_str + ":\n" + str(self.eachDataInfo[self.output_str])
+            for i in self.input_str:
+               rtn += i+":\n"+str(self.eachDataInfo[i])
+            return rtn
 
         def analyze(self):
             self.eachDataInfo = dict({})
             self.eachDataInfo[self.output_str] = self.analyzeOneVector(self.output)
-            for str,d in zip(self.input_str,self.input):
-                self.eachDataInfo[str] = self.analyzeOneVector(d)
+            for i,d in zip(self.input_str,self.input):
+                self.eachDataInfo[i] = self.analyzeOneVector(d)
 
         def analyzeOneVector(self,data):
             Avg = statistics.mean(data)

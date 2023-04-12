@@ -2,7 +2,7 @@ import copy
 from pyexpat.errors import XML_ERROR_TAG_MISMATCH
 import time
 import sys
-from utils.ts_fuzzy.ts_fuzzy import tsfuzzy
+from utils.ts_fuzzy.ts_fuzzy import TSFuzzy
 from utils.ts_fuzzy.actfunc import ActiveFunc
 import random
 
@@ -76,7 +76,7 @@ class PSO:
     self.X_train = X_src
     self.y_train = y_src
 
-    self.ts = tsfuzzy(X_tgt,y_tgt,X_src,y_src,M,C,Node,parMax,ActFunc)
+    self.ts = TSFuzzy(X_tgt,y_tgt,X_src,y_src,M,C,Node,parMax,ActFunc)
     for i in range(self.Size):
       self.particles.append(Particle(self))
       if(self.gBestValue > self.particles[i].pBestValue):
@@ -96,4 +96,4 @@ class PSO:
       score = self.ts.Q(self.gBestPos,self.y_test,self.X_test)
       trans.append(score)
       self.move()
-    return self.gBestValue,self.ts.predict(self.gBestPos,self.X_test),trans,self.gBestPos
+    return self.gBestValue,self.ts.predict(self.X_test,self.gBestPos),trans,self.gBestPos
