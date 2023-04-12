@@ -2,6 +2,15 @@ import numpy as np
 import skfuzzy.cluster as fuzz_cmeans #c-平均法
 from sklearn import metrics
 
+class ActFuncPar():
+  Alpha = None
+  Beta = None
+  Weight = None
+  def __init__(self,alpha,beta,weight):
+    self.Alpha = alpha
+    self.Beta = beta
+    self.Weight = weight
+
 class TSFuzzy():
     ActFunc = None
     M = None
@@ -33,11 +42,11 @@ class TSFuzzy():
         alpha = np.zeros((self.exVarNum,self.Node))
         beta = np.zeros((self.exVarNum,self.Node))
         weight = np.zeros((self.exVarNum,self.Node))
-        return {"alpha":alpha,"beta":beta,"weight":weight}
+        return ActFuncPar(alpha,beta,weight)
       alpha = np.random.uniform(0.001,self.ParMax,(self.exVarNum,self.Node))
       beta = np.random.uniform(-self.ParMax,self.ParMax,(self.exVarNum,self.Node))
       weight = np.random.uniform(-self.ParMax,self.ParMax,(self.exVarNum,self.Node))
-      return {"alpha":alpha,"beta":beta,"weight":weight}
+      return ActFuncPar(alpha,beta,weight)
 
     def phi(self,x,par): #マッピング関数
       fixed_x = np.zeros_like(x)
@@ -49,14 +58,14 @@ class TSFuzzy():
         for m in range(self.exVarNum):
           sum1 = 0
           for p in range(self.Node):
-            sum1=sum1+par["weight"][m][p]*self.ActFunc(par["alpha"][m][p]*(x[n][m]-par["beta"][m][p]))
+            sum1=sum1+par.Weight[m][p]*self.ActFunc(par.Alpha[m][p]*(x[n][m]-par.Beta[m][p]))
           fixed_x[n][m] = sum1
 
       for c in range(self.C):
         for m in range(self.exVarNum):
           sum2 = 0
           for p in range(self.Node):
-            sum2 = sum2 + par["weight"][m][p]*self.ActFunc(par["alpha"][m][p]*(self.cntr[c][m]-par["beta"][m][p]))
+            sum2 = sum2 + par.Weight[m][p]*self.ActFunc(par.Alpha[m][p]*(self.cntr[c][m]-par.Beta[m][p]))
           fixed_cntr[c][m] = sum2
       return fixed_x,fixed_cntr
 

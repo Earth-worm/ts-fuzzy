@@ -30,17 +30,17 @@ class Particle:
     self.value = self.swarm.ts.Q(self.pos,y,x)
 
   def move(self):
-    for tar in ["alpha","beta","weight"]:
-      for ex in range(self.swarm.ts.exVarNum):
-        for node in range(self.swarm.ts.Node):
-          self.v[tar][ex][node] = self.v[tar][ex][node]*self.swarm.W+self.swarm.CG*random.uniform(0,1)*(self.swarm.gBestPos[tar][ex][node]-self.pos[tar][ex][node])+self.swarm.CP*random.uniform(0,1)*(self.pBestPos[tar][ex][node]-self.pos[tar][ex][node])
-          self.pos[tar][ex][node] += self.v[tar][ex][node]
-          if(tar=="alpha"):
-            self.pos[tar][ex][node] = min(max(self.pos[tar][ex][node],0.001),self.swarm.ts.ParMax)
-          elif(tar=="beta"):
-            self.pos[tar][ex][node] = min(max(self.pos[tar][ex][node],-self.swarm.ts.ParMax),self.swarm.ts.ParMax)
-          else:
-            self.pos[tar][ex][node] = min(max(self.pos[tar][ex][node],-self.swarm.ts.ParMax),self.swarm.ts.ParMax)
+    for ex in range(self.swarm.ts.exVarNum):
+      for node in range(self.swarm.ts.Node):
+        self.v.Alpha[ex][node] = self.v.Alpha[ex][node]*self.swarm.W+self.swarm.CG*random.uniform(0,1)*(self.swarm.gBestPos.Alpha[ex][node]-self.pos.Alpha[ex][node])+self.swarm.CP*random.uniform(0,1)*(self.pBestPos.Alpha[ex][node]-self.pos.Alpha[ex][node])
+        self.v.Beta[ex][node] = self.v.Beta[ex][node]*self.swarm.W+self.swarm.CG*random.uniform(0,1)*(self.swarm.gBestPos.Beta[ex][node]-self.pos.Beta[ex][node])+self.swarm.CP*random.uniform(0,1)*(self.pBestPos.Beta[ex][node]-self.pos.Beta[ex][node])
+        self.v.Weight[ex][node] = self.v.Weight[ex][node]*self.swarm.W+self.swarm.CG*random.uniform(0,1)*(self.swarm.gBestPos.Weight[ex][node]-self.pos.Weight[ex][node])+self.swarm.CP*random.uniform(0,1)*(self.pBestPos.Weight[ex][node]-self.pos.Weight[ex][node])
+        self.pos.Alpha[ex][node] += self.v.Alpha[ex][node]
+        self.pos.Beta[ex][node] += self.v.Beta[ex][node]
+        self.pos.Weight[ex][node] += self.v.Weight[ex][node]
+        self.pos.Alpha[ex][node] = min(max(self.pos.Alpha[ex][node],0.001),self.swarm.ts.ParMax)
+        self.pos.Beta[ex][node] = min(max(self.pos.Beta[ex][node],-self.swarm.ts.ParMax),self.swarm.ts.ParMax)
+        self.pos.Weight[ex][node] = min(max(self.pos.Weight[ex][node],-self.swarm.ts.ParMax),self.swarm.ts.ParMax)
     self.evaluate(self.swarm.y_test,self.swarm.X_test)
     if(self.value < self.pBestValue):
       self.pBestValue = self.value

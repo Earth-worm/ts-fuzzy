@@ -51,6 +51,9 @@ if __name__ == "__main__":
     y_tgt,x_tgt = dataset.getData("Auburn")
     train_test_data = Khold(x_tgt,y_tgt,9)
     input = [i for i in train_test_data]
+    func(input[0][0],input[0][1],input[0][2],input[0][3],x_src,y_src,1)
+    """
     with Pool() as p:
         pools = [p.apply_async(func,(input[i][0],input[i][1],input[i][2],input[i][3],x_src,y_src,i)) for i in range(9)]
         [f.get() for f in pools]
+    """
