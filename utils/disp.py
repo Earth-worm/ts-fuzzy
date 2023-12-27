@@ -15,20 +15,22 @@ def scatter_data_3d(data,target,fn="fig",view=None): #描写 x,y,重心,ファ�
       ax.view_init(elev=view[0], azim=view[1])
     plt.title(fn)
     plt.savefig(fn+".png")
+    plt.close()
 
-def scatter_2data_3d(data,target1,target2,fn="fig",view=[10,45]): #view=[横方向,上方向]
+def scatter_2data_3d(data,y_true,y_pred,fn="fig",view=[10,45]): #view=[横方向,上方向]
   fig = plt.figure()
   ax = fig.add_subplot(111, projection='3d')
   ax.set_xlabel("feature1")
   ax.set_ylabel("feature2")
   ax.set_zlabel("output")
-  ax.plot(data.T[0],data.T[1],target2,marker="o",linestyle='None',label="test data")
-  ax.plot(data.T[0],data.T[1],target1,marker="x",linestyle='None',label="prediction")
+  ax.plot(data.T[0],data.T[1],y_true,marker="o",linestyle='None',label="y_true")
+  ax.plot(data.T[0],data.T[1],y_pred,marker="x",linestyle='None',label="y_pred")
   if(view is not None):
     ax.view_init(elev=view[0], azim=view[1])
   plt.legend(loc="upper left")
   plt.title(fn)
   plt.savefig(fn+".png")
+  plt.close()
 
 def tar_to_color(target): #整数を色に変える変数
   if(type(target[0]) is np.ndarray):

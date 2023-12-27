@@ -4,3 +4,5 @@ __pycache__/
 /data/proced_data/Beijing_PM252.csv
 /data/proced_data/ChennailHousing2.csv
 /data/proced_data/USAHousing2.csv
+/.vscode/
+.env

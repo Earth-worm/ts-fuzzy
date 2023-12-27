@@ -21,7 +21,6 @@ class TSFuzzy():
     X_tgt = None
     y_tgt = None
     exVarNum = None
-    tgt_size = None
     ParMax = None
 
     def __init__(self,X_src,y_src,X_tgt,y_tgt,M,C,Node,ParMax,ActFunc):
@@ -29,7 +28,6 @@ class TSFuzzy():
       self.C = C
       self.Node = Node
       self.exVarNum = X_src.shape[1]
-      self.tgt_size = X_tgt.shape[0]
       self.X_tgt = X_tgt
       self.y_tgt = y_tgt
       self.ParMax = ParMax

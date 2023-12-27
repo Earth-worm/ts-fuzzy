@@ -49,7 +49,8 @@ def get_data(PCAN = None): #PCAN:PCAのコンポーネント数
             sqft_basement = np.append(sqft_basement,float(datas[7]))
             yr_built = np.append(yr_built,float(datas[8][:-1]))
         f.close()
-    return price,np.array([bedrooms,bathrooms,sqft_living,sqft_lot,floors,sqft_above,sqft_basement,yr_built])
+    columns = ["price","bedrooms","bathrooms","sqft_living","sqft_lot","floors","sqft_above","sqft_basement","yr_built"]
+    return pd.DataFrame(np.array([year,bedrooms,bathrooms,sqft_living,sqft_lot,floors,sqft_above,sqft_basement,yr_built]).T,columns = columns)
 
 class split_dataset():
     class Dataset():
@@ -142,7 +143,10 @@ class split_dataset():
         if(tarCity not in self.cities):
             print("not exist such a city :",tarCity)
             exit()
-        return self.dataset[tarCity].output,self.dataset[tarCity].input.T
+        columns = ["price","bedrooms","bathrooms","sqft_living","sqft_lot","floors","sqft_above","sqft_basement","yr_built"]
+        input = self.dataset[tarCity].input
+        output =  self.dataset[tarCity].output
+        return pd.DataFrame(np.array([output,input[0],input[1],input[2],input[3],input[4],input[5],input[6],input[7]]).T,columns = columns)
 
     def getInfo(self,tarCity):
         if(tarCity not in self.cities):
@@ -174,6 +178,30 @@ def compareEachCity(city):
         plt.savefig("imgs/city/"+city[1]+"/"+d)
         plt.clf()
         plt.close()
+
+def compareTwoCities(city1,city2):
+    dataset = split_dataset()
+    y1,x1 = dataset.getData(city1)
+    x1 = x1.T
+    y2,x2 = dataset.getData(city2)
+    x2 = x2.T
+    for d,j in zip(["bedrooms","bathrooms","sqft_living","sqft_lot","floors","sqft_above","sqft_basement","yr_built"],range(8)):
+        fig = plt.figure(figsize=(8, 6), dpi=80)
+        fig.suptitle(d+"-price")
+        xlim = [min(min(x1[j]),min(x2[j])),max(max(x1[j]),max(x2[j]))]
+        ylim = [min(min(y1),min(y2)),max(max(y1),max(y2))]
+        ax = fig.add_subplot(1,2,1)
+        ax.scatter(x1[j],y1)
+        ax.set_title(city1)
+        ax.set_xlim(xlim)
+        ax.set_ylim(ylim)
+        ax = fig.add_subplot(1,2,2)
+        ax.scatter(x2[j],y2)
+        ax.set_title(city2)
+        ax.set_xlim(xlim)
+        ax.set_ylim(ylim)
+        plt.savefig("imgs/compareTwoCities/"+city1+"-"+city2+"-"+d)
+        plt.close(fig)
 
 if __name__ == "__main__":
     dataset = get_data()

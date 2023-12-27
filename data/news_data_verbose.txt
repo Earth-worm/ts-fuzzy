@@ -1,0 +1,121 @@
+補足説明
+non-stop: ストップワード(前置詞、接続詞、代名詞など、the,and,is)以外の単語
+メタデータ: 記事の属性を示す。タイトル、要約、カテゴリ、タグ、キーワード
+修正前
+URL: 記事のURL（予測には関係ない）
+timedelta: 記事公開日とデータセット取得日の日数差（予測には関係ない）
+n_tokens_title: タイトルに含まれる単語の数
+n_tokens_content: コンテンツに含まれる単語の数
+n_unique_tokens: コンテンツ内に含まれる単語の数
+n_non_stop_words: コンテンツ内のストップワード以外の単語の割合(1がほとんど)
+n_non_stop_unique_tokens: コンテンツ内のストップワード以外のユニークな単語の割合
+num_hrefs: リンクの数
+num_self_hrefs: Mashableが公開した他の記事へのリンクの数
+num_imgs: 画像の数
+num_videos: 動画の数
+average_token_length: コンテンツ内の単語の平均長
+num_keywords: メタデータ内のキーワードの数
+data_channel_is_lifestyle: データチャネルが「ライフスタイル」かどうか
+data_channel_is_entertainment: データチャネルが「エンターテイメント」かどうか
+data_channel_is_bus: データチャネルが「ビジネス」かどうか
+data_channel_is_socmed: データチャネルが「ソーシャルメディア」かどうか
+data_channel_is_tech: データチャネルが「テクノロジー」かどうか
+data_channel_is_world: データチャネルが「ワールド」かどうか
+kw_min_min: 最低シェア数を持つキーワード
+kw_max_min: 最低シェア数を持つキーワード
+kw_avg_min: 最低シェア数を持つキーワード
+kw_min_max: 最高シェア数を持つキーワード
+kw_max_max: 最高シェア数を持つキーワード
+kw_avg_max: 最高シェア数を持つキーワード
+kw_min_avg: 平均シェア数を持つキーワード
+kw_max_avg: 平均シェア数を持つキーワード
+kw_avg_avg: 平均シェア数を持つキーワード
+self_reference_min_shares: Mashable内の参照記事の最小シェア数
+self_reference_max_shares: Mashable内の参照記事の最大シェア数
+self_reference_avg_sharess: Mashable内の参照記事の平均シェア数
+weekday_is_monday: 記事が月曜日に公開されたかどうか
+weekday_is_tuesday: 記事が火曜日に公開されたかどうか
+weekday_is_wednesday: 記事が水曜日に公開されたかどうか
+weekday_is_thursday: 記事が木曜日に公開されたかどうか
+weekday_is_friday: 記事が金曜日に公開されたかどうか
+weekday_is_saturday: 記事が土曜日に公開されたかどうか
+weekday_is_sunday: 記事が日曜日に公開されたかどうか
+is_weekend: 記事が週末に公開されたかどうか
+LDA_00: LDAトピック0に近い度合い
+LDA_01: LDAトピック1に近い度合い
+LDA_02: LDAトピック2に近い度合い
+LDA_03: LDAトピック3に近い度合い
+LDA_04: LDAトピック4に近い度合い
+global_subjectivity: テキストの主観性
+global_sentiment_polarity: テキストの感情極性
+global_rate_positive_words: コンテンツ内のポジティブな単語の割合
+global_rate_negative_words: コンテンツ内のネガティブな単語の割合
+rate_positive_words: 中立的でないトークンの中のポジティブな単語の割合
+rate_negative_words: 中立的でないトークンの中のネガティブな単語の割合
+avg_positive_polarity: ポジティブな単語の平均極性
+min_positive_polarity: ポジティブな単語の最小極性
+max_positive_polarity: ポジティブな単語の最大極性
+avg_negative_polarity: ネガティブな単語の平均極性
+min_negative_polarity: ネガティブな単語の最小極性
+max_negative_polarity: ネガティブな単語の最大極性
+title_subjectivity: タイトルの主観性
+title_sentiment_polarity: タイトルの感情極性
+abs_title_subjectivity: 絶対的な主観性のレベル
+abs_title_sentiment_polarity: 絶対的な感情極性のレベル
+shares: 記事の共有数（予測対象の目的変数）
+修正後
+ファイル区分
+channel{
+    lifestyle
+    entertainment
+    bus
+    socmed
+    tech
+    world
+}
+
+n_tokens_title
+n_tokens_content
+n_unique_tokens
+n_non_stop_words
+n_non_stop_unique_tokens
+num_hrefs
+num_self_hrefs
+num_imgs
+num_videos
+average_token_length
+num_keywords
+kw_min_min
+kw_max_min
+kw_avg_min
+kw_min_max
+kw_max_max
+kw_avg_max
+kw_min_avg
+kw_max_avg
+kw_avg_avg
+self_reference_min_shares
+self_reference_max_shares
+self_reference_avg_sharess
+is_weekend
+LDA_00
+LDA_01
+LDA_02
+LDA_03
+global_subjectivity
+global_sentiment_polarity
+global_rate_positive_words
+global_rate_negative_words
+rate_positive_words
+rate_negative_words
+avg_positive_polarity
+min_positive_polarity
+max_positive_polarity
+avg_negative_polarity
+min_negative_polarity
+max_negative_polarity
+title_subjectivity
+title_sentiment_polarity
+abs_title_subjectivity
+abs_title_sentiment_polarity
+shares

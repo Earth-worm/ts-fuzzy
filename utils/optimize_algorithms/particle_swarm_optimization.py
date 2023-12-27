@@ -96,4 +96,4 @@ class PSO:
       score = self.ts.Q(self.gBestPos,self.y_test,self.X_test)
       trans.append(score)
       self.move()
-    return self.gBestValue,self.ts.predict(self.X_test,self.gBestPos),trans,self.gBestPos
+    return self.gBestValue,self.ts.predict(self.X_test,self.gBestPos),trans,self.gBestPos,
