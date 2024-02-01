@@ -1,4 +1,3 @@
-from data import housing_USA
 from utils.disp import scatter_data_3d,scatter_2data_3d
 import matplotlib.pyplot as plt
 import numpy as np
@@ -14,13 +13,14 @@ from pylab import rcParams
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
+from line import send_message
 
 M = 2.1
 C = 5
 Node = 5
 ParMax = 5
-Size = 300
-TMax = 1000
+Size = 100
+TMax = 500
 W = 0.9
 CP = 0.8
 CG = 0.6
@@ -56,22 +56,28 @@ def noTLLearn(input):
     y_src = input[1]
     x_test = input[2]
     y_test = input[3]
-    ts = TSFuzzy(x_src,y_src,None,None,M,C,Node,parMax,ActFunc)
+    ts = TSFuzzy(x_src,y_src,None,None,M,C,Node,ParMax,ActiveFunc.sigmoid)
     y_pred = ts.predict(x_test)
     return [metrics.mean_squared_error(y_pred,y_test),metrics.r2_score(y_pred,y_test)]
 
 def NoTL(x_tgt,y_tgt,dir):
+    if os.path.exists(f"{dir}/notl.csv"):
+        return
     khold = Khold(x_tgt.T,y_tgt,10)
     i = 0
     result = []
     arg_list = []
     for x_train,y_train,x_test,y_test in khold:
         arg_list.append([x_train,y_train,x_test,y_test])
+    with Pool(processes=6) as p:
+        result = p.map(func=noTLLearn,iterable=arg_list)
     df = pd.DataFrame(result,columns=["mean squared error","R"])
     df.to_csv(f"{dir}/notl.csv")
     return np.mean(df["mean squared error"])
 
 def ReduceFeatureTL(x_tgt,y_tgt,x_src,y_src,dir):
+    if os.path.exists(f"{dir}/reduce.csv"):
+        return
     khold = Khold(x_tgt.T,y_tgt,10)
     i = 0
     result = []
@@ -85,6 +91,8 @@ def ReduceFeatureTL(x_tgt,y_tgt,x_src,y_src,dir):
     return np.mean(df["mean squared error"])
     
 def MappingFeatureTL(x_tgt,y_tgt,x_src,y_src,dir):
+    if os.path.exists(f"{dir}/mapping.csv"):
+        return
     khold = Khold(x_tgt.T,y_tgt,10)
     i = 0
     result = []
@@ -109,11 +117,16 @@ def AllFeatureTL(x_tgt,y_tgt,x_src,y_src,dir):
     df.to_csv(f"{dir}/all.csv")
     return np.mean(df["mean squared error"])
 
+def get_data(filename):
+    missing_values = ["n/a", "na", "--", " ", "N/A", "NA"]
+    return pd.read_csv(filename,na_values = missing_values,sep=",")
+
 if __name__ == "__main__":
-    dataset = housing_USA.split_dataset()
-    src = dataset.getData("Seattle")
-    tgt = dataset.getData("Bellevue")
-    columns = ["bedrooms","bathrooms","sqft_living","sqft_lot","floors","sqft_above","sqft_basement","yr_built"]
+    originalParty = get_data("data/proced_data/spotify/genre/party.csv")
+    src = originalParty.copy()
+    originalPunk = get_data("data/proced_data/spotify/genre/punk.csv")
+    tgt = originalPunk.copy()
+    columns = ['year','danceability','key','loudness','mode','speechiness','acousticness','instrumentalness','liveness','valence','tempo','duration_ms','time_signature']
     no_tl_result = np.zeros([len(columns),len(columns)])
     mapping_result = np.zeros([len(columns),len(columns)])
     reduce_result = np.zeros([len(columns),len(columns)])
@@ -124,8 +137,8 @@ if __name__ == "__main__":
             src_col = np.append(np.delete(columns,[src_idx,tgt_idx]),columns[src_idx])
             tgt_col = np.append(np.delete(columns,[src_idx,tgt_idx]),columns[tgt_idx])
             reduce_col = np.delete(columns,[src_idx,tgt_idx])
-            y_src = src["price"]
-            y_tgt = tgt["price"]
+            y_src = src['popularity']
+            y_tgt = tgt['popularity']
             
             x_src = []
             x_tgt = []
@@ -143,9 +156,10 @@ if __name__ == "__main__":
             x_src_reduce = np.array(x_src_reduce)
             x_tgt_reduce = np.array(x_tgt_reduce)
             
-            dir = f"result/housing/after/{columns[src_idx]}_to_{columns[tgt_idx]}"
+            dir = f"result/music/{columns[src_idx]}_to_{columns[tgt_idx]}"
             print((src_idx)*len(columns) + (tgt_idx + 1),"/",len(columns)*len(columns),"   ",dir)
             if not os.path.exists(dir):
+                send_message(str((src_idx)*len(columns) + (tgt_idx + 1))+"/"+str(len(columns)*len(columns))+"   "+dir)
                 os.mkdir(dir)
             
             print("no tl")
@@ -158,10 +172,10 @@ if __name__ == "__main__":
             mapping_result[src_idx][tgt_idx]  = MappingFeatureTL(x_tgt,y_tgt,x_src,y_src,dir)
             
     resultDF = pd.DataFrame(no_tl_result,columns = columns)
-    resultDF.to_excel("result/housing/after/no_tl_result.xlsx")
+    resultDF.to_excel("result/music/no_tl_result.xlsx")
     
     resultDF = pd.DataFrame(reduce_result,columns = columns)
-    resultDF.to_excel("result/housing/after/reduce_result.xlsx")
+    resultDF.to_excel("result/music/reduce_result.xlsx")
     
     resultDF = pd.DataFrame(mapping_result,columns = columns)
-    resultDF.to_excel("result/housing/after/mapping_result.xlsx")
+    resultDF.to_excel("result/music/mapping_result.xlsx")

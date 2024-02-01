@@ -8,24 +8,31 @@ from pylab import rcParams
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
+import japanize_matplotlib
     
 if __name__ == "__main__":
     dataset = housing_USA.split_dataset()
-    src = dataset.getData("Seattle")
     tgt = dataset.getData("Bellevue")
-    columns = ["bedrooms","bathrooms","sqft_living","sqft_lot","floors","sqft_above","sqft_basement","yr_built"]
-    result = np.zeros([len(columns),len(columns)])
-    for src_idx in range(len(columns)):
-        for tgt_idx in range(len(columns)):
-            if(src_idx == tgt_idx):
-                continue
-            src_col = np.append(np.delete(columns,[src_idx,tgt_idx]),columns[src_idx])
-            tgt_col = np.append(np.delete(columns,[src_idx,tgt_idx]),columns[tgt_idx])
-            reduce_col = np.delete(columns,[src_idx,tgt_idx])
-            dir = f"{columns[src_idx]}_to_{columns[tgt_idx]}"
-            print(dir)
-            
-            
-            os.mkdir(f"result/housing/after/{dir}")
-    resultDF = pd.DataFrame(result,columns = columns)
-    resultDF.to_excel("result/housing/after/result1.xlsx")
+    columns = ["住宅価格","寝室数","バスルーム数","リビング面積","敷地面積","フロア数","屋根裏部屋面積","地下室面積","建築年"]
+    tgt.columns = columns
+    
+    corr = tgt.corr(numeric_only = True)
+    rcParams['figure.figsize'] = 12,12
+    sns.set(color_codes=True, font_scale=1.2,font="Yu Gothic")
+    ax = sns.heatmap(
+        corr, 
+        vmin=-1, vmax=1, center=0,
+        cmap=sns.diverging_palette(0, 220, n=200),
+        square=True
+    )
+    ax.set_xticklabels(
+        ax.get_xticklabels(),
+        rotation=45,
+        horizontalalignment='right',
+        fontdict={"fontweight":"bold"}
+    )
+    ax.set_yticklabels(ax.get_yticklabels(),fontdict={"fontweight":"bold"})
+    # 図の保存と図示
+    plt.savefig('result/housing_tgt.png')
+    plt.show()
+    print(plt.rcParams['font.family'])
