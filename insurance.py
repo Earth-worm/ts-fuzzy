@@ -1,4 +1,4 @@
-from data import housing_USA
+from data.insurance import get_data
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -16,8 +16,8 @@ M = 2.1
 C = 5
 Node = 5
 ParMax = 5
-Size = 300
-TMax = 1000
+Size = 150
+TMax = 300
 W = 0.9
 CP = 0.8
 CG = 0.6
@@ -58,7 +58,7 @@ def noTLLearn(input):
     return [metrics.mean_squared_error(y_pred,y_test),metrics.r2_score(y_pred,y_test)]
 
 def NoTL(x_tgt,y_tgt,dir):
-    khold = Khold(x_tgt.T,y_tgt,10)
+    khold = Khold(x_tgt.T,y_tgt,13)
     i = 0
     result = []
     arg_list = []
@@ -71,7 +71,7 @@ def NoTL(x_tgt,y_tgt,dir):
     return np.mean(df["mean squared error"])
 
 def ReduceFeatureTL(x_tgt,y_tgt,x_src,y_src,dir):
-    khold = Khold(x_tgt.T,y_tgt,10)
+    khold = Khold(x_tgt.T,y_tgt,13)
     i = 0
     result = []
     arg_list = []
@@ -84,7 +84,7 @@ def ReduceFeatureTL(x_tgt,y_tgt,x_src,y_src,dir):
     return np.mean(df["mean squared error"])
     
 def MappingFeatureTL(x_tgt,y_tgt,x_src,y_src,dir):
-    khold = Khold(x_tgt.T,y_tgt,10)
+    khold = Khold(x_tgt.T,y_tgt,13)
     i = 0
     result = []
     arg_list = []
@@ -97,7 +97,7 @@ def MappingFeatureTL(x_tgt,y_tgt,x_src,y_src,dir):
     return np.mean(df["mean squared error"])
 
 def AllFeatureTL(x_tgt,y_tgt,x_src,y_src,dir):
-    khold = Khold(x_tgt.T,y_tgt,10)
+    khold = Khold(x_tgt.T,y_tgt,13)
     result = []
     arg_list = []
     for x_train,y_train,x_test,y_test in khold:
@@ -109,10 +109,12 @@ def AllFeatureTL(x_tgt,y_tgt,x_src,y_src,dir):
     return np.mean(df["mean squared error"])
 
 if __name__ == "__main__":
-    dataset = housing_USA.split_dataset()
-    src = dataset.getData("Seattle")
-    tgt = dataset.getData("Bellevue")
-    columns = ["bedrooms","bathrooms","sqft_living","sqft_lot","floors","sqft_above","sqft_basement","yr_built"]
+    dataset = get_data()
+    src = dataset[dataset['region'] == "southwest" ]
+    tgt = dataset[dataset['region'] == "northwest" ]
+    print(src.shape,tgt.shape)
+    exit()
+    columns = ['age', 'bmi', 'children']
     no_tl_result = np.zeros([len(columns),len(columns)])
     mapping_result = np.zeros([len(columns),len(columns)])
     reduce_result = np.zeros([len(columns),len(columns)])
@@ -123,8 +125,8 @@ if __name__ == "__main__":
             src_col = np.append(np.delete(columns,[src_idx,tgt_idx]),columns[src_idx])
             tgt_col = np.append(np.delete(columns,[src_idx,tgt_idx]),columns[tgt_idx])
             reduce_col = np.delete(columns,[src_idx,tgt_idx])
-            y_src = src["price"]
-            y_tgt = tgt["price"]
+            y_src = np.array(src["charges"])
+            y_tgt = np.array(tgt["charges"])
             
             x_src = []
             x_tgt = []
@@ -142,28 +144,24 @@ if __name__ == "__main__":
             x_src_reduce = np.array(x_src_reduce)
             x_tgt_reduce = np.array(x_tgt_reduce)
             
-            dir = f"result/housing/after2/{columns[src_idx]}_to_{columns[tgt_idx]}"
+            dir = f"result/insurance/{columns[src_idx]}_to_{columns[tgt_idx]}"
             print((src_idx)*len(columns) + (tgt_idx + 1),"/",len(columns)*len(columns),"   ",dir)
             os.mkdir(dir)
             
             print("no tl")
             no_tl_result[src_idx][tgt_idx] = NoTL(x_tgt,y_tgt,dir)
             
-            """
             print("reduce")
             reduce_result[src_idx][tgt_idx] = ReduceFeatureTL(x_tgt_reduce,y_tgt,x_src_reduce,y_src,dir)
             
-            print("mapping")
-            mapping_result[src_idx][tgt_idx]  = MappingFeatureTL(x_tgt,y_tgt,x_src,y_src,dir)
-            """
+            #print("mapping")
+            #mapping_result[src_idx][tgt_idx]  = MappingFeatureTL(x_tgt,y_tgt,x_src,y_src,dir)
             
     resultDF = pd.DataFrame(no_tl_result,columns = columns)
-    resultDF.to_excel("result/housing/after2/no_tl_result.xlsx")
+    resultDF.to_excel("result/insurance/no_tl_result.xlsx")
     
-    """
     resultDF = pd.DataFrame(reduce_result,columns = columns)
-    resultDF.to_excel("result/housing/after/reduce_result.xlsx")
+    resultDF.to_excel("result/insurance/reduce_result.xlsx")
     
-    resultDF = pd.DataFrame(mapping_result,columns = columns)
-    resultDF.to_excel("result/housing/after/mapping_result.xlsx")
-    """
+   # resultDF = pd.DataFrame(mapping_result,columns = columns)
+#resultDF.to_excel("result/insurance/mapping_result.xlsx")
