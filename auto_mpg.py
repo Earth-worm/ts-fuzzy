@@ -113,8 +113,6 @@ if __name__ == "__main__":
     tgt = dataset[dataset["Model Year"] > 80]
     tgt = tgt.drop(tgt.index[-1])
     src = dataset[dataset["Model Year"] <= 80]
-    print(tgt.shape,src.shape)
-    exit()
     columns = ['Cylinders', 'Displacement', 'Horsepower', 'Weight','Acceleration', 'Model Year']
     no_tl_result = np.zeros([len(columns),len(columns)])
     mapping_result = np.zeros([len(columns),len(columns)])
@@ -147,22 +145,22 @@ if __name__ == "__main__":
             
             dir = f"result/mpg/{columns[src_idx]}_to_{columns[tgt_idx]}"
             print((src_idx)*len(columns) + (tgt_idx + 1),"/",len(columns)*len(columns),"   ",dir)
-            os.mkdir(dir)
+            #os.mkdir(dir)
             
-            print("no tl")
-            no_tl_result[src_idx][tgt_idx] = NoTL(x_tgt,y_tgt,dir)
+            #print("no tl")
+            #no_tl_result[src_idx][tgt_idx] = NoTL(x_tgt,y_tgt,dir)
             
-            print("reduce")
-            reduce_result[src_idx][tgt_idx] = ReduceFeatureTL(x_tgt_reduce,y_tgt,x_src_reduce,y_src,dir)
+            #print("reduce")
+            #reduce_result[src_idx][tgt_idx] = ReduceFeatureTL(x_tgt_reduce,y_tgt,x_src_reduce,y_src,dir)
             
-            #print("mapping")
-            #mapping_result[src_idx][tgt_idx]  = MappingFeatureTL(x_tgt,y_tgt,x_src,y_src,dir)
+            print("mapping")
+            mapping_result[src_idx][tgt_idx]  = MappingFeatureTL(x_tgt,y_tgt,x_src,y_src,dir)
             
-    resultDF = pd.DataFrame(no_tl_result,columns = columns)
-    resultDF.to_excel("result/mpg/no_tl_result.xlsx")
+    #resultDF = pd.DataFrame(no_tl_result,columns = columns)
+    #resultDF.to_excel("result/mpg/no_tl_result.xlsx")
     
-    resultDF = pd.DataFrame(reduce_result,columns = columns)
-    resultDF.to_excel("result/mpg/reduce_result.xlsx")
+    #resultDF = pd.DataFrame(reduce_result,columns = columns)
+    #resultDF.to_excel("result/mpg/reduce_result.xlsx")
     
-   # resultDF = pd.DataFrame(mapping_result,columns = columns)
-#resultDF.to_excel("result/mpg/mapping_result.xlsx")
+    resultDF = pd.DataFrame(mapping_result,columns = columns)
+    resultDF.to_excel("result/mpg/mapping_result.xlsx")
